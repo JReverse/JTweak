@@ -7,7 +7,7 @@
 - Android Q (10.0)
 - Android Pie (9.0)
 - Android Oreo (8.0, 8.1) 
-- Nougat (7.0)
+- Android Nougat (7.0)
 
 
 ## Supported Snachat versions
