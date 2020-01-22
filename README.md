@@ -14,7 +14,7 @@
 
 - 10.44.5.0 Beta (Beta For Android 10 Support ;) )
 
-## Supported Snachat versions
+## Features
 - Saving (Both Snaps/Stories/Chats)
 - ScreenShot Bypass
 - Sharing
