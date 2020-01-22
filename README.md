@@ -21,7 +21,7 @@
 - Root Detections removed (Java Side (Not Natively) )
 
 
-## PERKS
+## Perks
 - Can add friends
 - Very low ban rate
 - Works on latest android
@@ -34,7 +34,7 @@
 - Justxn (Updates Classes / Sharing implemention)
 - Snapcept for base / UI
 
-## ADVERTISEMENT
+## Advertisement
 - JOIN JSNAP TODAY https://discord.gg/uaj8HMX
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R11CS1Q)
