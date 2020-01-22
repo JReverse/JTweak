@@ -38,7 +38,7 @@
 - JOIN JSNAP TODAY https://discord.gg/uaj8HMX
 
 ## How to spoof images
-- In you're snapchat media folder (the one you don't need root to acces)
+- In you're snapchat media folder (the one you don't need root to access)
 - for image put replace.jpg in the snapchat folder
 - for video put replace.mp4 in the snapchat folder
 - then take video / pic
