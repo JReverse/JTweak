@@ -43,4 +43,7 @@
 - for video put replace.mp4 in the snapchat folder
 - then take video / pic
 
+## How View Saved Snaps / Stories?
+- Look for snapcept folder :P
+
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R11CS1Q)
