@@ -3,7 +3,6 @@
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R11CS1Q)
 
 ## Main Supported versions
-
 - Android Q (10.0)
 - Android Pie (9.0)
 - Android Oreo (8.0, 8.1) 
@@ -11,8 +10,7 @@
 
 
 ## Supported Snachat versions
-
-- 10.44.5.0 Beta (Beta For Android 10 Support ;) )
+- 10.44.5.0 Beta (Beta Used For Android 10 Support)
 
 ## Features
 - Saving (Both Snaps/Stories/Chats)
@@ -22,12 +20,12 @@
 
 
 ## Perks
-- Can add friends
+- You can add friends
 - Very low ban rate
-- Works on latest android
+- Works on latest android version
 
 ## ATTENTION (IF YOU USE PIE/Q)
-- You must you the Edxposed Below or be banned!
+- You must use the Edxposed Below or be banned!
 - https://github.com/Juxstin/EdXposed-SnapChat-Bypass/releases
 
 ## Credits
@@ -38,12 +36,12 @@
 - JOIN JSNAP TODAY https://discord.gg/uaj8HMX
 
 ## How to spoof images
-- In you're snapchat media folder (the one you don't need root to access)
-- for image put replace.jpg in the snapchat folder
-- for video put replace.mp4 in the snapchat folder
-- then take video / pic
+- In youre snapchat media folder (the one you don't need root to access)
+- For image put replace.jpg in the snapchat folder
+- For video put replace.mp4 in the snapchat folder
+- Then take video / pic
 
 ## How View Saved Snaps / Stories ?
-- Look for snapcept folder :P
+- Look for snapcept folder :P (In internal storage)
 
 [![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R11CS1Q)
