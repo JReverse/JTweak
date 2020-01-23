@@ -21,7 +21,7 @@ public class LogUtils {
     }
 
     private static void log(String type, String text) {
-        XposedBridge.log(String.format("[Snapcept] %5s %s", type, text));
+        XposedBridge.log(String.format("[JTweak] %5s %s", type, text));
     }
 
 }

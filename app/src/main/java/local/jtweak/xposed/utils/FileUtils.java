@@ -13,7 +13,7 @@ public class FileUtils {
 
     public static File getFileBasePath() {
         String baseDir = Environment.getExternalStorageDirectory().getAbsolutePath();
-        String path = baseDir + File.separator + "Snapcept";
+        String path = baseDir + File.separator + "JTweak";
 
         File filePath = new File(path);
         if (!filePath.mkdirs() && !filePath.exists()) {

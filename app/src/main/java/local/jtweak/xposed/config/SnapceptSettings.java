@@ -7,9 +7,9 @@ import com.crossbowffs.remotepreferences.RemotePreferences;
 
 public class SnapceptSettings {
 
-    public static final String AUTHORITY = "local.snapcept.preferences";
+    public static final String AUTHORITY = "local.jtweak.preferences";
 
-    public static final String PREF_NAME = "local.snapcept_preferences";
+    public static final String PREF_NAME = "local.jtweak_preferences";
 
     private final SharedPreferences.OnSharedPreferenceChangeListener changeListener = new SharedPreferences.OnSharedPreferenceChangeListener() {
         @Override

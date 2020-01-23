@@ -3,11 +3,21 @@ package local.jtweak.xposed;
 import java.io.File;
 import com.google.common.io.Files;
 
+import android.database.Cursor;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.net.Uri;
+import android.content.Intent;
+import android.app.Activity;
+import android.content.ContentResolver;
+import android.provider.MediaStore;
+import android.os.Bundle;
+import android.webkit.URLUtil;
+import android.support.v7.app.AppCompatActivity;
+import android.content.ComponentName;
+import android.content.ActivityNotFoundException;
 
 import java.io.InputStream;
 import java.util.HashSet;
@@ -22,6 +32,7 @@ import de.robv.android.xposed.XposedHelpers;
 import de.robv.android.xposed.XposedBridge;
 import de.robv.android.xposed.XC_MethodHook;
 import de.robv.android.xposed.callbacks.XC_LoadPackage;
+import de.robv.android.xposed.XC_MethodReplacement;
 import local.jtweak.xposed.config.SnapceptSettings;
 import local.jtweak.xposed.hooks.CbcEncryptionAlgorithmClassHook;
 import local.jtweak.xposed.hooks.RootDetectorOverrides;
@@ -31,20 +42,33 @@ import local.jtweak.xposed.hooks.StoryEventClassHook;
 import local.jtweak.xposed.hooks.StoryVideoDecryptorClassHook;
 import local.jtweak.xposed.snapchat.SnapConstants;
 import local.jtweak.xposed.utils.LogUtils;
-import de.robv.android.xposed.XC_MethodReplacement;
-
+import local.jtweak.xposed.utils.Media;
 import static de.robv.android.xposed.XposedHelpers.findAndHookMethod;
 import static de.robv.android.xposed.XposedHelpers.findClass;
 
-public class SnapceptLoader implements IXposedHookLoadPackage {
+public class SnapceptLoader extends AppCompatActivity implements IXposedHookLoadPackage {
 
     private final Set<String> processedIds;
 
     private Context context;
 
+    private static Uri initializedUri;
+
+    private File sharedMediaDir;
+
+    private Uri sourceImageUri;
+
+    private File tempMediaFile;
+
+    private int rotation = 0;
+
     private SnapceptSettings settings;
 
     private Timer cleanTimer;
+
+    final Media mediaImg = new Media(); // a place to store the image
+
+    final Media mediaVid = new Media(); // a place to store the video
 
     public SnapceptLoader() {
         this.processedIds = new HashSet<>();
@@ -52,7 +76,26 @@ public class SnapceptLoader implements IXposedHookLoadPackage {
 
     String replaceLocation = "/storage/emulated/0/Snapchat/";
 
-    BitmapFactory.Options bitmapOptions = new android.graphics.BitmapFactory.Options();
+    public static String getPathFromContentUri(ContentResolver contentResolver, Uri contentUri) {
+        String[] projection = {MediaStore.Images.Media.DATA};
+        Cursor cursor = contentResolver.query(contentUri, projection, null, null, null);
+
+        if (cursor != null && cursor.moveToFirst()) {
+            int column_index = cursor.getColumnIndexOrThrow(MediaStore.Images.Media.DATA);
+            String filePath = cursor.getString(column_index);
+            cursor.close();
+            return filePath;
+        } else {
+            return null;
+        }
+    }
+    public static Uri getFileUriFromContentUri(ContentResolver contentResolver, Uri contentUri) {
+        String filePath = getPathFromContentUri(contentResolver, contentUri);
+        if (filePath == null) {
+            return null;
+        }
+        return Uri.fromFile(new File(filePath));
+    }
 
     @Override
     public void handleLoadPackage(XC_LoadPackage.LoadPackageParam lpparam) throws Throwable {
@@ -91,6 +134,9 @@ public class SnapceptLoader implements IXposedHookLoadPackage {
             // Hook screenshot detectors.
             hookScreenshotDetectors(lpparam.classLoader);
         }
+
+        // Hook Intent
+        IntentHook(lpparam.classLoader);
 
         // Hook Video Sharing
         hookSharingVideo(lpparam.classLoader);
@@ -168,17 +214,89 @@ public class SnapceptLoader implements IXposedHookLoadPackage {
         return Bitmap.createBitmap(src, 0, 0, src.getWidth(), src.getHeight(), matrix, true);
     }
 
+    private void IntentHook(ClassLoader loader) {
+
+        // This is where the media is loaded and transformed. Hooks after the onCreate() call of the main Activity.
+        findAndHookMethod("com.snapchat.android.LandingPageActivity", loader, "onCreate", Bundle.class, new XC_MethodHook() {
+            @Override
+            protected void afterHookedMethod(MethodHookParam param) throws Throwable {
+                final Activity activity = (Activity) param.thisObject;
+                // Get intent, action and MIME type
+                Intent intent = activity.getIntent();
+                String type = intent.getType();
+                String action = intent.getAction();
+                // Check if this is a normal launch of Snapchat or actually called by Snapshare and if loaded from recents
+                if (type != null && Intent.ACTION_SEND.equals(action) && (intent.getFlags() & Intent.FLAG_ACTIVITY_LAUNCHED_FROM_HISTORY) == 0) {
+                    Uri mediaUri = intent.getParcelableExtra(Intent.EXTRA_STREAM);
+                    // Check for bogus call
+                    if (mediaUri == null) {
+                        return;
+                    }
+                    /* We check if the current media got already initialized and should exit instead
+                     * of doing the media initialization again. This check is necessary
+                     * because onCreate() is also called if the phone is just rotated. */
+                    if (initializedUri == mediaUri) {
+                        return;
+                    }
+
+                    ContentResolver contentResolver = activity.getContentResolver();
+
+                    if (type.startsWith("image/")) {
+                        try {
+                            Bitmap bitmap = MediaStore.Images.Media.getBitmap(contentResolver, mediaUri);
+                            Bitmap Rotate = rotateBitmap(bitmap, -90);
+                            // Make Snapchat show the image
+                            mediaImg.setContent(Rotate);
+                        } catch (Exception e) {
+                            return;
+                        }
+                    } else if (type.startsWith("video/")) {
+                        Uri videoUri;
+                        // Snapchat expects the video URI to be in the file:// scheme, not content:// scheme
+                        if (URLUtil.isFileUrl(mediaUri.toString())) {
+                            videoUri = mediaUri;
+                        } else { // No file URI, so we have to convert it
+                            videoUri = getFileUriFromContentUri(contentResolver, mediaUri);
+                            if (videoUri != null) {
+
+                            } else {
+
+                                return;
+                            }
+                        }
+
+                        File videoFile = new File(videoUri.getPath());
+                        try {
+
+                            videoUri = Uri.fromFile(videoFile);
+                        } catch (Exception e) {
+                            return;
+                        }
+
+                        // Get size of video and compare to the maximum size
+                        mediaVid.setContent(videoUri);
+                    }
+
+                    /**
+                     * Mark image as initialized
+                     * @see initializedUri
+                     */
+                    initializedUri = mediaUri;
+                } else {
+                    initializedUri = null;
+                }
+            }
+
+        });
+    }
     private void hookSharingPicture(ClassLoader loader) {
 
         findAndHookMethod("adwd", loader, "a", Bitmap.class, Integer.class, String.class, long.class, boolean.class, int.class, "fre$b", new XC_MethodHook() {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
-                XposedBridge.log("Image taken. Proceeding with hook.");
 
-                File jpg = new File(replaceLocation + "replace.jpg");
-                if (jpg.exists()) {
-                    Bitmap replace = BitmapFactory.decodeFile(jpg.getPath(), bitmapOptions);
-                    param.args[0] = rotateBitmap(replace, -90);
+                XposedBridge.log("Image taken. Proceeding with hook.");
+                    param.args[0] =  mediaImg.getContent();
 
                     File findAvailable = new File(replaceLocation + "replaced.jpg");
                     int index = 0;
@@ -186,10 +304,8 @@ public class SnapceptLoader implements IXposedHookLoadPackage {
                     while(findAvailable.exists()) {
                         findAvailable = new File(replaceLocation + "replaced" + index++ + ".jpg");
                     }
-                    jpg.renameTo(findAvailable);
                     XposedBridge.log("Replaced image.");
-                } else XposedBridge.log("Nothing to replace");
-            }
+                }
         });
     }
 
@@ -198,26 +314,13 @@ public class SnapceptLoader implements IXposedHookLoadPackage {
             @Override
             protected void beforeHookedMethod(MethodHookParam param) throws Throwable {
                 XposedBridge.log("Video taken. Proceeding with hook.");
-                Uri uri = (Uri) param.args[0];
-                File recordedVideo = new File(uri.getPath());
-                File videoToShare =  new File(replaceLocation + "replace.mp4");
+                param.args[0] = mediaVid.getContent();
 
                 // Sometimes, the video rotation is wrong. I wrote some code to rotate it to the correct angle,
                 // however the angle is correct more often than not so I won't use this until I figure out a way to pick whether to rotate our not
                 //
                 // File rotatedShareVideo = rotateMp4File(videoToShare);
 
-                if (videoToShare.exists()) {
-                    Files.copy(videoToShare, recordedVideo);
-                    File findAvailable = new File(replaceLocation + "replaced.mp4");
-                    int index = 0;
-
-                    while(findAvailable.exists()) {
-                        findAvailable = new File(replaceLocation + "replaced" + index++ + ".mp4");
-                    }
-                    videoToShare.renameTo(findAvailable);
-                    XposedBridge.log("Replaced Video.");
-                } else XposedBridge.log("Nothing to replace");
             }
         });
     }
