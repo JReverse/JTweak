@@ -6,8 +6,8 @@ android {
         applicationId "local.jtweak"
         minSdkVersion 15
         targetSdkVersion 28
-        versionCode 27
-        versionName "1.13.0"
+        versionCode 02
+        versionName "1.0.2"
         vectorDrawables.useSupportLibrary = true
     }
     buildTypes {
