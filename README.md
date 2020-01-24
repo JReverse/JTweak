@@ -10,7 +10,7 @@
 
 
 ## Supported Snachat versions
-- 10.44.5.0 Beta (Beta Used For Android 10 Support)
+- 10.48.5.0 Beta (Beta Used For Android 10 Support)
 
 ## Features
 - Saving (Both Snaps/Stories/Chats)
