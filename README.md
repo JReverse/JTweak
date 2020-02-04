@@ -33,7 +33,7 @@
 - Snapcept for base / UI
 
 ## Advertisement
-- JOIN JSNAP TODAY https://discord.gg/uaj8HMX
+- JOIN JSNAP TODAY https://discord.gg/TDqWmEa
 
 ## How to spoof images
 - In youre snapchat media folder (the one you don't need root to access)
