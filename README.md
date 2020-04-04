@@ -1,6 +1,6 @@
 # JTweak
 
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R11CS1Q)
+[![BTC](https://cdn.discordapp.com/attachments/622269191344357386/696088326322651236/heart.png)](https://shoppy.gg/product/14JT5da)
 
 ## Main Supported versions
 - Android Q (10.0)
@@ -44,4 +44,4 @@
 ## How View Saved Snaps / Stories ?
 - Look for snapcept folder :P (In internal storage)
 
-[![ko-fi](https://www.ko-fi.com/img/githubbutton_sm.svg)](https://ko-fi.com/R6R11CS1Q)
+[![BTC](https://cdn.discordapp.com/attachments/622269191344357386/696088326322651236/heart.png)](https://shoppy.gg/product/14JT5da)
