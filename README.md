@@ -16,7 +16,6 @@
 - Sharing
 - Root Detections removed (Java Side (Not Natively) )
 
-
 ## Perks
 - You can add friends
 - Very low ban rate
@@ -34,3 +33,6 @@
 
 ## How View Saved Snaps / Stories ?
 - Look for snapcept folder :P (In internal storage)
+
+## Advertisement
++ https://jsnap.re/
